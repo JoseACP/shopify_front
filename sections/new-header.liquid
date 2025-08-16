@@ -1,0 +1,243 @@
+{% schema  %} 
+    {
+        "name": "Header",
+        "class": "top-new-header",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "logo",
+                "label": "Logo image",
+            }
+        ],
+        "blocks": [
+            {
+                "name": "header menu",
+                "type": "menu",
+                "settings": [
+                    {
+                        "type": "url",
+                        "id": "linkurl",
+                        "label": "Link url",
+                    }
+                ]
+            }
+        ]
+    }
+{% endschema %}
+
+<style>
+    body:not(.index) .top-new-header {
+        border-bottom: 1px solid #eee;
+    }
+
+    .new-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 1em;
+        align-items: center;
+        padding: 1em 0;
+    }
+
+    .new-header img {
+        object-fit: cover;
+        max-width: 120px;
+        width: 100;
+        height: auto;
+    }
+
+    .toggle-sidecart {
+        position: relative;
+    }
+
+    a.logoimg {
+        text-aling: center;
+    }
+
+    .new-header .search {
+        flex: 2;
+        text-align: center;
+    }
+
+    .search form{
+        border: 1px solid #eee;
+        border-radius: 40px;
+        overflow: hidden;
+    }
+
+    .search input{
+        width: 100%;
+        padding: 1em 0.5em 1em 2.5em;
+        border: transparent;
+    }
+
+    .search button.search-header__submit {
+        position: absolute;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 2%;
+        background: #333;
+    }
+
+    .new-header .icons {
+        display: grid;
+        grid-auto-flow: column;
+        justify-context: flex-end;
+        gap: 1.5em; 
+    }
+
+    .new-header .icons a.account img{
+        height: 24px;
+        width: 24px;
+    }
+
+    .new-header .icons a.cart {
+        height: 24px;
+        width: 24px;
+    }
+
+    .js-cartcount {
+        background: #333;
+        color: #fff;
+        width: 14px;
+        height: 14px;
+        display: flex;
+        aling-items: center;
+        justify-content: center;
+        font-size: 10px;
+        borrder-radius: 100%;
+        position: absolute;
+        rigth: -0.5em;
+        top: 0
+    }
+
+    .logo-menu{
+        display: flex;
+        flex: 1;
+        max-width: 530px;
+        width: 100%;
+        justify-content: space-between;
+        gap: 1em;
+        aling-items: center;
+    }
+
+    .logo-menu a{
+        text-decoration: none;
+        font-size : 14px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: #000
+    }
+
+    .logo-menu .links {
+        display: flex;
+        aling-items: center;
+        gap: 1em;
+    }
+
+    .icons a{ 
+        text-decoration: none;
+        color: #000;
+    }
+
+    .new-header .search{
+        position: relative;
+        z-index: 2;
+        max-width: 348px;
+        width: 100%;
+    }
+
+    .new-header .search #searchResults {
+        position: absolute;
+        background: #fff;
+        box-shadow: 0 0 5px rgba(0,0,0,0.25);
+        width: 100%;
+    }
+
+    .result-heading {
+        padding: 2em 0;
+        text-align: center;
+    }
+
+    .new-header .search #searchResults:empty {
+        display: none;
+    }
+
+    .new-header .search #searchResult p.no-results {
+        padding: 1em 1em 0.5em;
+    }
+
+    .top-new-header input#searchInput:focus-visible{
+        outline: none;
+        box-shadow: none;
+    }
+
+    #searchResults .product-card {
+        display: flex;
+        justify-content: flex-start;
+        padding: 1em;
+    }
+
+    #searchResults .product-card:not(:last-of-type){
+        padding-bottom: 0.5em;
+    }
+
+    #searchResults .product-img {
+        width: 70px;
+        height: 70px;
+    }
+
+    #searchResult .grid-content{
+        display: flex;
+        flex-flow: column; 
+        gap: 4px;
+        align-items: flex-start;
+        text-aling: left; 
+    }
+
+    #searchResult .collection-price{ 
+        justify-content: flex-start;
+    }
+
+    #searchResults p{
+        margin: 0 0 4px;
+        font-weight: 600; 
+    }
+
+</style>
+
+<div class="container">
+    <div class="new-header">
+        <div class="logo-menu">
+            <a href="/" class="logoimg">
+                <img src="{{ section.settings.logo | image_url: width:180 }}" alt="Dreami logo" width="180" height="auto"/>
+            </a>
+            <div class="links">
+                {% for block in section.blocks %}
+                    <a href="{{ block.settings.linkurl }}">{{ block.settings.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="search">
+            <form action="/search" method="get" role="search" class="searchForm">
+                <Input type="search" name="q" id="searchInput" aria-label="Search our site" placeholder="Search" class="search-header__Input" />
+                <button type="submit" class="search-header__submit">
+                    <img src="{{ "search-icon.png" |  asset_img_url}}" alt="search icon" width="24" height="24">
+                </button>
+            </form>
+            <div id="searchResults"></div>
+        </div>
+        <div class="icons">
+            <a href="/acctions/login">
+                <img width="24" height="24" src="{{ 'user.png' | asset_img_url: '24x24' }}" alt="login user">
+            </a>
+            <a href="/cart" class="cart toggle-sidecart">
+                <span class="js-cartcount">{{ cart.item_count }}</span>
+                <img src="{{ 'cart.png' |  asset_img_url: '24x24' }}" alt="login user" width="24" height="24">
+            </a>
+        </div>
+    </div>
+</div>
